@@ -40,6 +40,7 @@ from game import Actions
 import util
 import time
 import search
+import math
 
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."
@@ -132,6 +133,26 @@ class SearchAgent(Agent):
             return self.actions[i]
         else:
             return Directions.STOP
+
+
+class HeuristicGameState:
+    def __init__(self, walls, pacPos, food):
+        self.walls = walls
+        self.pacPos = pacPos
+        self.food = food
+
+    def getWalls(self):
+        return self.walls
+
+    def getPacmanPosition(self):
+        return self.pacPos
+
+    def getNumFood(self):
+        return self.food.count
+
+    def hasFood(self, x, y):
+        return self.food[x][y]
+
 
 class PositionSearchProblem(search.SearchProblem):
     """
@@ -480,17 +501,71 @@ def foodHeuristic(state, problem):
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
 
-    foodList = foodGrid.asList()
+    def manhattanWithWalls(point1, point2, walls):
+        x1, y1 = point1
+        x2, y2 = point2
 
+        dx = x2-x1
+        dy = y2-y1
+        dist = abs( x1 - x2 ) + abs( y1 - y2 )
+        cross = abs(dx)
+
+        if dx == 0:    
+            ydomain = (y1,y2+1) if y1 < y2 else (y2,y1+1)
+            for y in range(ydomain[0], ydomain[1]):
+                if walls[x1][y]:
+                    dist += 2
+
+        elif dy == 0:
+            xdomain = (x1,x2+1) if x1 < x2 else (x2,x1+1)
+            for x in range(xdomain[0], xdomain[1]):
+                if walls[x][y1]:
+                    dist += 2
+
+        # else:
+        #     m = float(dy)/dx
+        #     b = m * -x1 + y1
+
+        #     yval = lambda x: m*x + b
+
+        #     xdomain = (x1,x2+1) if x1 < x2 else (x2,x1+1)
+        #     for x in range(xdomain[0], xdomain[1]):
+        #         y = yval(x)
+        #         yfloor = int(math.floor(y))
+        #         yceil = int(math.ceil(y))
+        #         if walls[x][yfloor] and walls[x][yceil]:
+        #             dist += 1
+
+        return dist
+
+    maxPathLength = foodGrid.width * foodGrid.height - problem.walls.count()
+    
+    def scaledManhattan(start, current, goal):
+        dx1 = current[0] - goal[0]
+        dy1 = current[1] - goal[1]
+        dx2 = start[0] - goal[0]
+        dy2 = start[1] - goal[1]
+        manhattan = abs(dx1) + abs(dy1)
+        cross = abs(dx1*dy2 - dx2*dy1)
+        costOneStep = 1.0
+        manhattan += cross * costOneStep/maxPathLength
+        return manhattan
+
+
+    foodList = foodGrid.asList()
+    walls = problem.walls
     cost = 0
     curr = position
     while foodList:
-        distance, closestFood = min([(util.manhattanDistance(curr, food), food) for food in foodList])
-        cost += distance
+        # distances = [(mazeDistance(curr, food, HeuristicGameState(problem.walls, curr, foodGrid)), food) for food in foodList]
+        distances = [(scaledManhattan(position, curr, food), food) for food in foodList]
+        minDist, closestFood = min(distances)
+        cost += minDist #+ maxDist
         curr = closestFood
         foodList.remove(closestFood)
 
     return cost
+
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
