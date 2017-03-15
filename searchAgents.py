@@ -501,64 +501,27 @@ def foodHeuristic(state, problem):
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
 
-    def manhattanWithWalls(point1, point2, walls):
-        x1, y1 = point1
-        x2, y2 = point2
+    if not 'maxPathLength' in problem.heuristicInfo:
+        problem.heuristicInfo['maxPathLength'] = foodGrid.width * foodGrid.height - problem.walls.count()
 
-        dx = x2-x1
-        dy = y2-y1
-        dist = abs( x1 - x2 ) + abs( y1 - y2 )
-        cross = abs(dx)
+    maxPathLength = problem.heuristicInfo['maxPathLength']
 
-        if dx == 0:    
-            ydomain = (y1,y2+1) if y1 < y2 else (y2,y1+1)
-            for y in range(ydomain[0], ydomain[1]):
-                if walls[x1][y]:
-                    dist += 2
-
-        elif dy == 0:
-            xdomain = (x1,x2+1) if x1 < x2 else (x2,x1+1)
-            for x in range(xdomain[0], xdomain[1]):
-                if walls[x][y1]:
-                    dist += 2
-
-        # else:
-        #     m = float(dy)/dx
-        #     b = m * -x1 + y1
-
-        #     yval = lambda x: m*x + b
-
-        #     xdomain = (x1,x2+1) if x1 < x2 else (x2,x1+1)
-        #     for x in range(xdomain[0], xdomain[1]):
-        #         y = yval(x)
-        #         yfloor = int(math.floor(y))
-        #         yceil = int(math.ceil(y))
-        #         if walls[x][yfloor] and walls[x][yceil]:
-        #             dist += 1
-
-        return dist
-
-    maxPathLength = foodGrid.width * foodGrid.height - problem.walls.count()
-    
-    def scaledManhattan(start, current, goal):
+    def scaledManhattan(current, goal):
         dx1 = current[0] - goal[0]
         dy1 = current[1] - goal[1]
-        dx2 = start[0] - goal[0]
-        dy2 = start[1] - goal[1]
+        dx2 = position[0] - goal[0]
+        dy2 = position[1] - goal[1]
         manhattan = abs(dx1) + abs(dy1)
-        cross = abs(dx1*dy2 - dx2*dy1)
+        cross = abs(dx1*dy2 - dx2*dy1)  # vector cross product increases when off diagonal
         costOneStep = 1.0
-        manhattan += cross * costOneStep/maxPathLength
+        manhattan += cross * costOneStep/maxPathLength  # scale cross product by potential impact of deviation
         return manhattan
 
-
     foodList = foodGrid.asList()
-    walls = problem.walls
     cost = 0
     curr = position
     while foodList:
-        # distances = [(mazeDistance(curr, food, HeuristicGameState(problem.walls, curr, foodGrid)), food) for food in foodList]
-        distances = [(scaledManhattan(position, curr, food), food) for food in foodList]
+        distances = [(scaledManhattan(curr, food), food) for food in foodList]
         minDist, closestFood = min(distances)
         cost += minDist #+ maxDist
         curr = closestFood
