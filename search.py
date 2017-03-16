@@ -102,21 +102,22 @@ def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     q = util.Queue()
-    q.push((problem.getStartState(), []))
-    discovered = []
+    startState = problem.getStartState()
+    q.push((startState, []))
+    visited = set()
+    visited.add(startState[0])
     
     while not q.isEmpty():
         loc, directions= q.pop()
-        #print loc, directions
-        #print loc, problem.getSuccessors(loc)
+
+        if problem.isGoalState(loc):
+            return directions
+
         for nextLoc, direction, distance in problem.getSuccessors(loc):
-            if not nextLoc in discovered:
-                #print 1
-                if problem.isGoalState(nextLoc):
-                    directions.append(direction)
-                    return directions
+            if not nextLoc in visited:
                 q.push((nextLoc, directions + [direction]))
-                discovered.append(nextLoc)
+                visited.add(nextLoc)
+
     return []
 
 def uniformCostSearch(problem):
@@ -125,7 +126,7 @@ def uniformCostSearch(problem):
     q = util.PriorityQueue()
     q.push((problem.getStartState(), []), 0)
     
-    discovered = []
+    expanded = set()
     
     while not q.isEmpty():
         loc, directions = q.pop()
@@ -133,10 +134,12 @@ def uniformCostSearch(problem):
         if problem.isGoalState(loc):
             return directions
         
-        discovered.append(loc)
-        for nextLoc, direction, distance in problem.getSuccessors(loc):
-            if not nextLoc in discovered:
-                q.push((nextLoc, directions + [direction]), problem.getCostOfActions(directions + [direction]))
+        if not loc in expanded:
+            expanded.add(loc)
+            for nextLoc, direction, distance in problem.getSuccessors(loc):
+                if not nextLoc in expanded:
+                    q.push((nextLoc, directions + [direction]), problem.getCostOfActions(directions + [direction]))
+
     return []
 
 def nullHeuristic(state, problem=None):
@@ -152,7 +155,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     q = util.PriorityQueue()
     q.push((problem.getStartState(), []), heuristic(problem.getStartState(), problem))
     
-    discovered = []
+    expanded = set()
     
     while not q.isEmpty():
         loc, directions = q.pop()
@@ -160,12 +163,13 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         if problem.isGoalState(loc):
             return directions
         
-        discovered.append(loc)
-        
-        for nextLoc, direction, distance in problem.getSuccessors(loc):
-            if not nextLoc in discovered:
-                cost = problem.getCostOfActions(directions + [direction]) + heuristic(nextLoc, problem)
-                q.push((nextLoc, directions + [direction]), cost)
+        if not loc in expanded:
+            expanded.add(loc)
+            for nextLoc, direction, distance in problem.getSuccessors(loc):
+                if not nextLoc in expanded:
+                    cost = problem.getCostOfActions(directions + [direction]) + heuristic(nextLoc, problem)
+                    q.push((nextLoc, directions + [direction]), cost)
+
     return []
 
 
