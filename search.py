@@ -110,7 +110,8 @@ def breadthFirstSearch(problem):
     startState = problem.getStartState()
     q.push((startState, []))
     visited = list()
-    visited.append(startState[0])
+    if hasattr(startState, '__getitem__'):
+        visited.append(startState[0])
     
     while not q.isEmpty():
         loc, directions= q.pop()
