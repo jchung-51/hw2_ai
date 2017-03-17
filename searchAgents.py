@@ -309,6 +309,7 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+        # no extra setup needed
 
     def getStartState(self):
         """
@@ -324,9 +325,9 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         pos, visitedCorners = state
-        if pos in self.corners and not pos in visitedCorners:
+        if pos in self.corners and not pos in visitedCorners: # see if this state's position is a corner
             visitedCorners.append(pos)
-        return len(visitedCorners) == 4
+        return len(visitedCorners) == 4 # the goal is when all the corners have been visited
 
     def getSuccessors(self, state):
         """
@@ -354,7 +355,7 @@ class CornersProblem(search.SearchProblem):
             if not hitsWall:
                 nextPos = (nextx, nexty)
                 successorCorners = list(visitedCorners) # create deep copy of list
-                if nextPos in self.corners and not nextPos in successorCorners:
+                if nextPos in self.corners and not nextPos in successorCorners: # track when visiting corners
                     successorCorners.append(nextPos)
                 successor = (nextPos, successorCorners)
                 successors.append( (successor, action, 1) ) # add successor in direction that doesn't hit a wall
@@ -512,7 +513,7 @@ def foodHeuristic(state, problem):
         dx2 = position[0] - goal[0]
         dy2 = position[1] - goal[1]
         manhattan = abs(dx1) + abs(dy1)
-        cross = abs(dx1*dy2 - dx2*dy1)  # vector cross product increases when off diagonal
+        cross = abs(dx1*dy2 - dx2*dy1)  # vector cross product increases when off diagonal, this keeps it on the manhattan distance path with some obstacle avoidance
         costOneStep = 1.0
         manhattan += cross * costOneStep/maxPathLength  # scale cross product by potential impact of deviation
         return manhattan
@@ -523,7 +524,7 @@ def foodHeuristic(state, problem):
     while foodList:
         distances = [(scaledManhattan(curr, food), food) for food in foodList]
         minDist, closestFood = min(distances)
-        cost += minDist #+ maxDist
+        cost += minDist
         curr = closestFood
         foodList.remove(closestFood)
 

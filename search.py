@@ -88,7 +88,7 @@ def depthFirstSearch(problem):
     """
     s = util.Stack()
     s.push((problem.getStartState(), []))
-    visited = list()
+    visited = list() # using list on all of these algs because sets can't store mutable data, like arrays - problematic for some search problems, prefer set otherwise
 
     while not s.isEmpty():
         loc, directions = s.pop()
