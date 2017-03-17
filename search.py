@@ -160,7 +160,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     q = util.PriorityQueue()
     q.push((problem.getStartState(), []), heuristic(problem.getStartState(), problem))
     
-    expanded = set()
+    expanded = list()
     
     while not q.isEmpty():
         loc, directions = q.pop()
@@ -169,7 +169,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             return directions
         
         if not loc in expanded:
-            expanded.add(loc)
+            expanded.append(loc)
             for nextLoc, direction, distance in problem.getSuccessors(loc):
                 if not nextLoc in expanded:
                     cost = problem.getCostOfActions(directions + [direction]) + heuristic(nextLoc, problem)
