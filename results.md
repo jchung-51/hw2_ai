@@ -10,6 +10,11 @@ Justin Chung (jchung51@jhu.edu)
 Justin wrote the algorithms for questions 1-4.
 Ryan got questions 1-4 all passing autograder and implemented the CornersProblem search problem. Also collected submission materials and recorded results. Wrote the optional corners heuristic successfully and began writing the food heuristic but it currently isn't admissable.
 
+###### Functionality
+- Autograder passes questions 1-6 with full credit.
+- Question 7 does not need to pass autograder because we are not implementing foodHeuristic.
+- Only modified files are search.py and searchAgents.py, and they are only modified below the `"*** YOUR CODE HERE ***"` marker.
+
 #### Question 1: Depth-First Search
 ##### Tiny Maze
 `python pacman.py -l tinyMaze -p SearchAgent`
