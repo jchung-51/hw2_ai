@@ -34,6 +34,8 @@ description for details.
 Good luck and happy searching!
 """
 
+### Edited by Ryan Demo (rdemo1@jhu.edu) and Justin Chung (jchung51@jhu.edu)
+
 from game import Directions
 from game import Agent
 from game import Actions

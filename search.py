@@ -16,6 +16,8 @@ In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
 """
 
+### Edited by Ryan Demo (rdemo1@jhu.edu) and Justin Chung (jchung51@jhu.edu)
+
 import util
 from game import Directions
 
