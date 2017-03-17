@@ -1,0 +1,17 @@
+Assignment 2: Game Playing
+
+600.435 | Artificial Intelligence | Spring 2017
+
+Ryan Demo (rdemo1@jhu.edu)
+Justin Chung (jchung51@jhu.edu)
+
+
+Running ##############################
+Only search.py and searchAgents.py have been modified. They should work as indicated on the Berkeley site.
+
+For example, to run Berkeley's autograder, type:
+$ python autograder.py
+
+
+Comments #############################
+All of the commands to reproduce our results are written in preformatted text in the submitted PDF above the results themselves.
